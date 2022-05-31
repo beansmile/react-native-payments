@@ -39,19 +39,23 @@ RCT_EXPORT_METHOD(createPaymentRequest: (NSDictionary *)methodData
 {
     NSString *merchantId = methodData[@"merchantIdentifier"];
     NSDictionary *gatewayParameters = methodData[@"paymentMethodTokenizationParameters"][@"parameters"];
-    
     if (gatewayParameters) {
         self.hasGatewayParameters = true;
         self.gatewayManager = [GatewayManager new];
         [self.gatewayManager configureGateway:gatewayParameters merchantIdentifier:merchantId];
     }
     
+    NSArray<PKPaymentNetwork> *supportedNetworks = [self getSupportedNetworksFromMethodData:methodData];
     self.paymentRequest = [[PKPaymentRequest alloc] init];
     self.paymentRequest.merchantIdentifier = merchantId;
-    self.paymentRequest.merchantCapabilities = PKMerchantCapability3DS|PKMerchantCapabilityEMV;
+    if ([supportedNetworks containsObject:PKPaymentNetworkChinaUnionPay]) {
+        self.paymentRequest.merchantCapabilities = PKMerchantCapability3DS|PKMerchantCapabilityEMV;
+    } else {
+        self.paymentRequest.merchantCapabilities = PKMerchantCapability3DS;
+    }
     self.paymentRequest.countryCode = methodData[@"countryCode"];
     self.paymentRequest.currencyCode = methodData[@"currencyCode"];
-    self.paymentRequest.supportedNetworks = [self getSupportedNetworksFromMethodData:methodData];
+    self.paymentRequest.supportedNetworks = supportedNetworks;
     self.paymentRequest.paymentSummaryItems = [self getPaymentSummaryItemsFromDetails:details];
     self.paymentRequest.shippingMethods = [self getShippingMethodsFromDetails:details];
     

@@ -50,10 +50,6 @@
     "react-native": "^0.72.4",
     "react-test-renderer": "16.0.0-alpha.12"
   },
-  "peerDependencies": {
-    "react": ">=15",
-    "react-native": ">=0.60"
-  },
   "jest": {
     "testPathIgnorePatterns": [
       "/node_modules/",

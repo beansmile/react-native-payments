@@ -38,7 +38,7 @@
     "validator": "^9.4.1"
   },
   "devDependencies": {
-    "husky": "^0.14.1",
+    "husky": "^0.14.1"
   },
   "jest": {
     "testPathIgnorePatterns": [

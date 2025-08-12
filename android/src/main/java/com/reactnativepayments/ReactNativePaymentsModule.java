@@ -1,42 +1,45 @@
 package com.reactnativepayments;
 
-import android.view.WindowManager;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.NonNull;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.support.annotation.RequiresPermission;
 import android.util.Log;
+import android.view.WindowManager;
 
-import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.ReactBridge;
-import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.ReadableMapKeySetIterator;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.BooleanResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.identity.intents.model.UserAddress;
-import com.google.android.gms.wallet.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.BaseActivityEventListener;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.BooleanResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.identity.intents.model.UserAddress;
+import com.google.android.gms.wallet.Cart;
+import com.google.android.gms.wallet.FullWallet;
+import com.google.android.gms.wallet.FullWalletRequest;
+import com.google.android.gms.wallet.IsReadyToPayRequest;
+import com.google.android.gms.wallet.LineItem;
+import com.google.android.gms.wallet.MaskedWallet;
+import com.google.android.gms.wallet.MaskedWalletRequest;
+import com.google.android.gms.wallet.PaymentMethodTokenizationParameters;
+import com.google.android.gms.wallet.PaymentMethodTokenizationType;
+import com.google.android.gms.wallet.Wallet;
+import com.google.android.gms.wallet.WalletConstants;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ReactNativePaymentsModule extends ReactContextBaseJavaModule implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final int LOAD_MASKED_WALLET_REQUEST_CODE = 88;
@@ -160,7 +163,7 @@ public class ReactNativePaymentsModule extends ReactContextBaseJavaModule implem
 
         int environment = getEnvironmentFromPaymentMethodData(paymentMethodData);
         if (mGoogleApiClient == null) {
-            buildGoogleApiClient(getCurrentActivity(), environment);
+            buildGoogleApiClient(getReactApplicationContext().getCurrentActivity(), environment);
         }
 
         Wallet.Payments.isReadyToPay(mGoogleApiClient, req)
@@ -174,7 +177,7 @@ public class ReactNativePaymentsModule extends ReactContextBaseJavaModule implem
 
     @ReactMethod
     public void abort(Callback errorCallback, Callback successCallback) {
-        Log.i(REACT_CLASS, "ANDROID PAY ABORT" + getCurrentActivity().toString());
+        Log.i(REACT_CLASS, "ANDROID PAY ABORT" + getReactApplicationContext().getCurrentActivity().toString());
         successCallback.invoke();
     }
 
@@ -210,7 +213,7 @@ public class ReactNativePaymentsModule extends ReactContextBaseJavaModule implem
 
         int environment = getEnvironmentFromPaymentMethodData(paymentMethodData);
         if (mGoogleApiClient == null) {
-            buildGoogleApiClient(getCurrentActivity(), environment);
+            buildGoogleApiClient(getReactApplicationContext().getCurrentActivity(), environment);
         }
 
         Wallet.Payments.loadMaskedWallet(mGoogleApiClient, maskedWalletRequest, LOAD_MASKED_WALLET_REQUEST_CODE);
@@ -241,7 +244,7 @@ public class ReactNativePaymentsModule extends ReactContextBaseJavaModule implem
 
         int environment = getEnvironmentFromPaymentMethodData(paymentMethodData);
         if (mGoogleApiClient == null) {
-            buildGoogleApiClient(getCurrentActivity(), environment);
+            buildGoogleApiClient(getReactApplicationContext().getCurrentActivity(), environment);
         }
 
         Wallet.Payments.loadFullWallet(mGoogleApiClient, fullWalletRequest, LOAD_FULL_WALLET_REQUEST_CODE);
